@@ -4,31 +4,31 @@ from langchain_openai import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain, SequentialChain
 from dotenv import load_dotenv
-import os
 
 # Load environment variables
 load_dotenv()
 
-# Variable to store the API key
-api_key = None
+# Variable to store the API key in session state
+if 'api_key' not in st.session_state:
+    st.session_state.api_key = None
 
 # Function to set the OpenAI API key
 def set_api_key(key):
-    global api_key
-    api_key = key
-    openai.api_key = api_key
+    st.session_state.api_key = key
+    openai.api_key = key
 
 # Function to check if the API key is set
 def is_api_key_set():
-    return api_key is not None
+    return st.session_state.api_key is not None
 
 # Function to generate restaurant name and menu items
 def generate_restaurant_name_and_items(cuisine):
     if not is_api_key_set():
-        raise ValueError("API key not set. Please provide an API key.")
+        st.error("API key not set. Please provide an API key.")
+        return None
     
     try:
-        llm = OpenAI(openai_api_key=api_key, temperature=0.7)
+        llm = OpenAI(openai_api_key=st.session_state.api_key, temperature=0.7)
     except Exception as e:
         st.error(f"Failed to initialize OpenAI: {e}")
         return None
@@ -67,12 +67,13 @@ def generate_restaurant_name_and_items(cuisine):
 st.title("Restaurant Name Generator")
 
 # Sidebar input for OpenAI API key
-api_key_input = st.sidebar.text_input("Enter your OpenAI API Key", type="password")
+if st.session_state.api_key is None:
+    api_key_input = st.sidebar.text_input("Enter your OpenAI API Key", type="password")
 
-# Button to set the API key
-if st.sidebar.button("Set API Key"):
-    set_api_key(api_key_input)
-    st.sidebar.success("API Key set successfully!")
+    # Button to set the API key
+    if st.sidebar.button("Set API Key"):
+        set_api_key(api_key_input)
+        st.sidebar.success("API Key set successfully!")
 
 # Check if API key is provided and set
 if is_api_key_set():
