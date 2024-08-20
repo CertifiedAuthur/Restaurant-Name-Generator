@@ -4,6 +4,7 @@ from langchain_openai import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain, SequentialChain
 from dotenv import load_dotenv
+import os
 
 # Load environment variables
 load_dotenv()
@@ -26,8 +27,12 @@ def generate_restaurant_name_and_items(cuisine):
     if not is_api_key_set():
         raise ValueError("API key not set. Please provide an API key.")
     
-    llm = OpenAI(temperature=0.7)
-    
+    try:
+        llm = OpenAI(openai_api_key=api_key, temperature=0.7)
+    except Exception as e:
+        st.error(f"Failed to initialize OpenAI: {e}")
+        return None
+
     # Prompt template for generating restaurant name
     prompt_template_name = PromptTemplate(
         input_variables=['cuisine'],
@@ -78,11 +83,12 @@ if is_api_key_set():
         # Generate restaurant name and menu items
         response = generate_restaurant_name_and_items(cuisine)
         
-        st.header(response['restaurant_name'].strip())
-        menu_items = response['menu_items'].strip().split(",")
-        st.write("**Menu Items**")
-        
-        for item in menu_items:
-            st.write("-", item)
+        if response:
+            st.header(response['restaurant_name'].strip())
+            menu_items = response['menu_items'].strip().split(",")
+            st.write("**Menu Items**")
+            
+            for item in menu_items:
+                st.write("-", item)
 else:
     st.warning("Please enter your OpenAI API Key to use the application.")
