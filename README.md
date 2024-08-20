@@ -23,7 +23,7 @@ To run this project locally, follow these steps:
 1. **Clone the repository**:
 
     ```bash
-    git clone https://github.com/yourusername/restaurant-name-generator.git
+    git clone https://github.com/CertifiedAuthur/restaurant-name-generator.git
     cd restaurant-name-generator
     ```
 
@@ -100,7 +100,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For any questions or feedback, please reach out to [your email](mailto:youremail@example.com).
+For any questions or feedback, please reach out to [your email](mailto:chibuzorauthur@example.com).
 
 ---
 
